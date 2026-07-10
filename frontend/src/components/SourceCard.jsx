@@ -38,6 +38,7 @@ className="text-blue-400"
 </div>
 
 
+
 <div>
 
 <h4 className="
@@ -45,10 +46,7 @@ text-white
 font-medium
 ">
 
-{
-source.file ||
-source.title
-}
+{source.document}
 
 </h4>
 
@@ -56,9 +54,10 @@ source.title
 <p className="
 text-gray-400
 text-sm
+capitalize
 ">
 
-Legal Document
+{source.doc_type}
 
 </p>
 
@@ -85,20 +84,30 @@ rounded-xl
 p-4
 ">
 
-<p className="text-gray-400 text-sm">
-Page
+
+<p className="
+text-gray-400
+text-sm
+">
+
+Pages
+
 </p>
 
 
-<p className="text-white mt-1">
-{
-source.page
-}
+<p className="
+text-white
+mt-1
+font-semibold
+">
+
+{source.page_start} - {source.page_end}
 
 </p>
 
 
 </div>
+
 
 
 
@@ -109,15 +118,23 @@ p-4
 ">
 
 
-<p className="text-gray-400 text-sm">
+<p className="
+text-gray-400
+text-sm
+">
+
 Score
+
 </p>
 
 
-<p className="text-white mt-1">
-{
-source.score
-}
+<p className="
+text-white
+mt-1
+font-semibold
+">
+
+{source.score}
 
 </p>
 
