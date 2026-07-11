@@ -44,7 +44,19 @@ if not API_KEY:
 
 client = Groq(api_key=API_KEY)
 
-TOP_CHUNKS_FOR_LLM = 8
+TOP_CHUNKS_FOR_LLM = 4
+
+# ------------------------------------------------------------
+# RELEVANCE THRESHOLD
+# ------------------------------------------------------------
+# This was 0.25 before, which was rejecting almost every valid query
+# (53 out of 54 test queries got "no sources found"). Lowered to 0.05
+# so genuinely relevant chunks aren't thrown away. Tune this further
+# based on what you see in testing:
+#   - Still too many "no sources" on valid queries -> lower it more (0.02)
+#   - Now getting irrelevant/junk sources on clearly out-of-scope
+#     queries -> raise it a bit (0.08, 0.10)
+MIN_RELEVANCE_SCORE = 0.05
 
 print("=" * 70)
 print("Groq Connected Successfully")
@@ -185,7 +197,9 @@ def hybrid_retrieve(query):
 
             seen_docs.add(r["filename"])
 
-    filtered = [x for x in filtered if x["hybrid_score"] >= 0.25]
+    # CHANGED: was >= 0.25 (too strict, rejected almost everything).
+    # Now uses MIN_RELEVANCE_SCORE defined at the top of this file.
+    filtered = [x for x in filtered if x["hybrid_score"] >= MIN_RELEVANCE_SCORE]
 
     return filtered[:TOP_CHUNKS_FOR_LLM]
 
@@ -278,7 +292,7 @@ def generate_answer(prompt):
 
     response = client.chat.completions.create(
 
-        model="llama-3.3-70b-versatile",
+        model="llama-3.1-8b-instant",
 
         messages=[
             {
