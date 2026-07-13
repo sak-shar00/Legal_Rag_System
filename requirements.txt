@@ -12,3 +12,4 @@ requests
 openpyxl
 pydantic
 streamlit
+nltk

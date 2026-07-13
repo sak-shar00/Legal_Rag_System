@@ -1,7 +1,15 @@
 import re
-from nltk.corpus import stopwords
+import nltk
 
-stop_words = set(stopwords.words("english"))
+try:
+    from nltk.corpus import stopwords
+    stop_words = set(stopwords.words("english"))
+
+except LookupError:
+    nltk.download("stopwords")
+    from nltk.corpus import stopwords
+    stop_words = set(stopwords.words("english"))
+
 
 def preprocess(text):
 
