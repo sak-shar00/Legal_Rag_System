@@ -38,3 +38,9 @@ def ask_question(request: QueryRequest):
     result = ask(request.question)
 
     return result
+    from .summarize import summarize_document
+
+@app.post("/summarize")
+def summarize_endpoint(request: QueryRequest):  # reuse same request model, "question" field me filename bhejo
+    result = summarize_document(request.question)
+    return result

@@ -44,7 +44,7 @@ if not API_KEY:
 
 client = Groq(api_key=API_KEY)
 
-TOP_CHUNKS_FOR_LLM = 4
+TOP_CHUNKS_FOR_LLM = 5
 
 # ------------------------------------------------------------
 # RELEVANCE THRESHOLD
@@ -185,21 +185,22 @@ def hybrid_retrieve(query):
 
     results = sort_results(results)
 
-    filtered = []
-
-    seen_docs = set()
-
+    # Keep only the best chunk per document (filename).
+    # This aligns API behavior with `hybrid_search.py` and improves Top-1 doc matching.
+    best_by_doc = {}
     for r in results:
+        doc = r["filename"]
+        if doc not in best_by_doc or r["hybrid_score"] > best_by_doc[doc]["hybrid_score"]:
+            best_by_doc[doc] = r
 
-        if r["filename"] not in seen_docs:
-
-            filtered.append(r)
-
-            seen_docs.add(r["filename"])
+    filtered = list(best_by_doc.values())
 
     # CHANGED: was >= 0.25 (too strict, rejected almost everything).
     # Now uses MIN_RELEVANCE_SCORE defined at the top of this file.
     filtered = [x for x in filtered if x["hybrid_score"] >= MIN_RELEVANCE_SCORE]
+
+    # Re-sort after document-level selection.
+    filtered = sort_results(filtered)
 
     return filtered[:TOP_CHUNKS_FOR_LLM]
 
