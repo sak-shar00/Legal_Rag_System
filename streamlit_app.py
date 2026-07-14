@@ -26,7 +26,7 @@ import streamlit as st
 if "GROQ_API_KEY" in st.secrets:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
 
-from python.llm_answer import ask  # noqa: E402  (import after env var is set)
+from python.llm_answer_deploy import ask # noqa: E402  (import after env var is set)
 
 # ==============================
 # PAGE CONFIG
